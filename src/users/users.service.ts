@@ -1,23 +1,34 @@
 import { Injectable } from '@nestjs/common';
 
+export type User = any;
 @Injectable()
 export class UsersService {
   private readonly users = [
     {
       id: 1,
-      name: 'Steve',
-      password: '',
+      username: 'Steve',
+      email: 'steve@mre.io',
+      password: 'changeme',
+      createdAt: '',
+      updatedAt: '',
+      deletedAt: '',
+    },
+    {
+      id: 2,
+      username: 'Mrieo',
+      email: 'mreio@mre.io',
+      password: '1234',
       createdAt: '',
       updatedAt: '',
       deletedAt: '',
     },
   ];
 
-  findAll(): any {
+  async findAll(): Promise<User[]> {
     return this.users;
   }
 
-  findOne(id: string): any {
-    return this.users.filter((user) => user.id === +id);
+  async findOne(email: string): Promise<User | undefined> {
+    return this.users.find((user) => user.email === email);
   }
 }
