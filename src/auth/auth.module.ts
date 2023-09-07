@@ -3,16 +3,9 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 
-// This module set the authorization for the endpoints
-// we set the services to use as providers, like AuthService
-// also a guard to check JWT
-// controller to set the endpoints
-// also it gets the UserModule to get info about users that are going to login
-// JWT module
 @Module({
   providers: [
     AuthService,
@@ -26,8 +19,8 @@ import { APP_GUARD } from '@nestjs/core';
     UsersModule,
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1200s' },
     }),
   ],
 })
