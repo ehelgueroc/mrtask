@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ExceptionLoggerFilter } from './utils/exceptionsLogger.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +11,8 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new ExceptionLoggerFilter(httpAdapter));
 
   const config = new DocumentBuilder()
     .setTitle('MrTask API')
