@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from '../users/dtos';
 import { createHmac } from 'crypto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -15,14 +16,13 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async registerUser(user: RegisterUserDto) {
+  async registerUser(user: RegisterUserDto): Promise<User> {
     try {
       const userExists = await this.usersService.findOne(user.email);
       if (userExists) {
         throw new ConflictException('Username already exists');
       }
       // generate hash DOING TOO MUCH? Should be in another place?
-      // should change the generateHashPassword to generateHash only
       const hashPassword = this.generateHash(user.password);
       return await this.usersService.create({
         ...user,
@@ -42,9 +42,7 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
 
     return {
-      access_token: await this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_SECRET,
-      }),
+      access_token: await this.jwtService.signAsync(payload),
     };
   }
 
