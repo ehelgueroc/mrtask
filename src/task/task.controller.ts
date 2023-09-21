@@ -19,6 +19,8 @@ export class TaskController {
 
   @Post()
   create(@Body() createTaskDto: CreateTaskDto, @Req() req: RequestWithUser) {
+    console.log('Hi');
+    console.log(createTaskDto);
     return this.taskService.create(createTaskDto, req.user);
   }
 

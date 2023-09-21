@@ -1,22 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { UsersService } from 'src/users/users.service';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Task } from './entities/task.entity';
+import { User } from 'src/interfaces';
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+    @InjectRepository(Task) private taskRepository: Repository<Task>,
+  ) {}
 
-  async create(
-    createTaskDto: CreateTaskDto,
-    user: { sub: string; email: string },
-  ) {
+  async create(createTaskDto: CreateTaskDto, user: User) {
     const userRecord = await this.userService.findOne(user.email);
-    console.log(userRecord);
-    if (user) {
-      // connecto to the database to create the task record
+    if (!userRecord) {
+      throw new BadRequestException();
     }
-    return 'This action adds a new task';
+
+    return await this.taskRepository.save({
+      ...createTaskDto,
+      author: { id: userRecord.id },
+    });
   }
 
   findAll() {
