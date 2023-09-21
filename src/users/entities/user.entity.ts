@@ -1,9 +1,11 @@
 import { Exclude, Transform } from 'class-transformer';
+import { Task } from 'src/task/entities/task.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,26 +13,26 @@ import {
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  public id: string;
 
   @Column()
-  name: string;
+  public name: string;
 
   @Column({ unique: true })
-  email: string;
+  public email: string;
 
   @Column()
   @Exclude({ toPlainOnly: true })
-  password: string;
+  public password: string;
 
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  public createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  public updatedAt: Date;
 
   @DeleteDateColumn()
   @Transform((value) => {
@@ -38,7 +40,10 @@ export class User {
       return value;
     }
   })
-  deletedAt?: Date;
+  public deletedAt?: Date;
+
+  @OneToMany(() => Task, (task: Task) => task.author)
+  public tasks: Task[];
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
