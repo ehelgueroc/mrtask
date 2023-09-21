@@ -1,10 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class TaskService {
-  create(createTaskDto: CreateTaskDto) {
+  constructor(private readonly userService: UsersService) {}
+
+  async create(
+    createTaskDto: CreateTaskDto,
+    user: { sub: string; email: string },
+  ) {
+    const userRecord = await this.userService.findOne(user.email);
+    console.log(userRecord);
+    if (user) {
+      // connecto to the database to create the task record
+    }
     return 'This action adds a new task';
   }
 
